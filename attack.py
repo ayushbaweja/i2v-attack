@@ -13,12 +13,16 @@ def encode_img(vae, img_path, dtype, device):
         transforms.Normalize([0.5], [0.5])
     ])
     image_tensor = transform(image).unsqueeze(0).to(device).to(dtype)
+    image_tensor = image_tensor.unsqueeze(2)
     with torch.no_grad():
         encoded_image = vae.encode(image_tensor).latent_dist.sample()
     
     return encoded_image
 
 def generate_gaussian_noise(shape, dtype, device):
+    batch_size, num_channels, num_frames, height, width = shape
+    if num_channels != 3:
+        shape = (batch_size, 3, num_frames, height, width)
     return torch.randn(shape, dtype=dtype, device=device)
 
 def main():
