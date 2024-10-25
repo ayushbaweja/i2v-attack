@@ -3,6 +3,9 @@ from PIL import Image
 from torchvision import transforms
 import torch
 import argparse
+import numpy as np
+import torch.nn as nn
+from tqdm import tqdm
 
 def preprocess_image(image_path, input_size=512):
     """
@@ -21,16 +24,16 @@ def preprocess_image(image_path, input_size=512):
     image_tensor = transform(img_array).unsqueeze(0)
     return image_tensor
 
-def encode_img(vae, img_path, dtype, device):
+def encode_img(vae, image_tensor, dtype, device):
     vae.enable_slicing()
     vae.enable_tiling()
-    image = Image.open(img_path).convert('RGB')
+    
     transform = transforms.Compose([
-        transforms.ToTensor(),
         transforms.Normalize([0.5], [0.5])
     ])
-    image_tensor = transform(image).unsqueeze(0).to(device).to(dtype)
+    image_tensor = transform(image_tensor).to(device).to(dtype)
     image_tensor = image_tensor.unsqueeze(2)
+    
     with torch.no_grad():
         encoded_image = vae.encode(image_tensor).latent_dist.sample()
     
