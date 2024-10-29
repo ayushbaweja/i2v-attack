@@ -1,0 +1,6 @@
+diffusers==0.30.3
+numpy==2.1.2
+Pillow==11.0.0
+torch==2.3.0
+torchvision==0.18.1a0
+tqdm==4.66.5
